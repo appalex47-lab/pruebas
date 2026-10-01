@@ -2535,3 +2535,16 @@ modo Ejecutivo la conserva mientras oculta la barra de aprendizaje (exclusiva de
 
 - `config.app.name` = `'RevNavigator'` (única fuente del nombre; los 7 exports lo leen en `source.app` / `metadata.app`). `FP.config.storage.namespace` (`fp.v1`) y `storageDb.name` (`fp-data`) no cambian: son independientes del nombre visible.
 - `diagnostic-view.renderTree`: `<details class="driver-node">` dentro de `.driver-tree`; `.tree-node` queda solo para la cadena trazable (Recovery Center y Medir).
+
+## Fase 10 · Paquete de análisis
+
+- `js/export/zip.js` → `FP.zip.create(files) / download(name, bytes) / crc32` (zip «stored», UTF-8, sin dependencias).
+- `js/export/analysisPackage.js` → `FP.analysisPackage.build(entries, meta)`: lista fija `EXPORTS` (7), `records(obj)`, `redact()` (narrativa sin `businessContext`), archivo vacío con aviso, `indice.json` (schema `analysis_package` 1.0.0) y `LEEME.txt`.
+- `app.js` → `EXPORT_BUILDERS` (un constructor por export, usado por los botones individuales y por el paquete), `previewPackage()` (estado por export para la página) y `buildAnalysisPackage()` (calcula forecast, reforecast, diagnóstico y productos antes de armar); acción `pkg-download`.
+- `js/ui/package-view.js` + vista `paquete` (grupo `medir`) en `guidanceConfig.VIEWS`/`GROUPS`, `index.html` y el menú.
+
+## Mes por defecto y selección de periodo y canal
+
+- `app.js`: `defaultMonth(cutoff)` (usa `lastActualDate()`), `periodRange(type, key)`, acción `pkg-context`.
+- `narrative-view.js`: `contextControls(state, idPrefix, keyAction, typeAction)`, usado por la Narrativa (`dx-setting` / `dx-period-type`) y por el paquete (`pkg-context`). `diagnostic-view.js` exporta `periodOptions`.
+- `navigation.js`: `extractContext`/`applyContext` tratan `narrativa` y `paquete` como `diagnostico`; `dx.run` solo se invalida si cambia la selección.
